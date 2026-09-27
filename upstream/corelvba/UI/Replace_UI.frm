@@ -1,0 +1,241 @@
+VERSION 5.00
+Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Replace_UI 
+   ClientHeight    =   4560
+   ClientLeft      =   45
+   ClientTop       =   330
+   ClientWidth     =   7590
+   OleObjectBlob   =   "Replace_UI.frx":0000
+   StartUpPosition =   1  'CenterOwner
+End
+Attribute VB_Name = "Replace_UI"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = False
+#If VBA7 Then
+    Private Declare PtrSafe Function DrawMenuBar Lib "user32" (ByVal hwnd As Long) As Long
+    Private Declare PtrSafe Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
+    Private Declare PtrSafe Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+    Private Declare PtrSafe Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
+    Private Declare PtrSafe Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
+    
+#Else
+    Private Declare Function DrawMenuBar Lib "user32" (ByVal hwnd As Long) As Long
+    Private Declare Function GetWindowLong Lib "user32" Alias "GetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long) As Long
+    Private Declare Function SetWindowLong Lib "user32" Alias "SetWindowLongA" (ByVal hwnd As Long, ByVal nIndex As Long, ByVal dwNewLong As Long) As Long
+    Private Declare Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
+    Private Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
+#End If
+Private Const GWL_STYLE As Long = (-16)
+Private Const GWL_EXSTYLE = (-20)
+Private Const WS_CAPTION As Long = &HC00000
+Private Const WS_EX_DLGMODALFRAME = &H1&
+
+
+Private Sub Close_Icon_Click()
+  Unload Me    '// 关闭
+End Sub
+
+
+Private Sub UserForm_Initialize()
+  Dim IStyle As Long
+  Dim hwnd As Long
+  
+  hwnd = FindWindow("ThunderDFrame", Me.Caption)
+
+  IStyle = GetWindowLong(hwnd, GWL_STYLE)
+  IStyle = IStyle And Not WS_CAPTION
+  SetWindowLong hwnd, GWL_STYLE, IStyle
+  DrawMenuBar hwnd
+  IStyle = GetWindowLong(hwnd, GWL_EXSTYLE) And Not WS_EX_DLGMODALFRAME
+  SetWindowLong hwnd, GWL_EXSTYLE, IStyle
+  
+  With Me
+  '  .StartUpPosition = 0
+  '  .Left = 500
+  '  .Top = 200
+    .width = 378
+    .Height = 228
+  End With
+
+  LNG_CODE = API.GetLngCode
+  Init_Translations Me, LNG_CODE
+End Sub
+
+Private Sub LOGO_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+  If Button Then
+    mx = X
+    my = Y
+  End If
+End Sub
+
+Private Sub LOGO_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+  If Button Then
+    Me.Left = Me.Left - mx + X
+    Me.Top = Me.Top - my + Y
+  End If
+End Sub
+
+
+Private Sub Image1_MouseDown(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+  Dim pos_x As Variant
+  Dim pos_y As Variant
+  pos_x = Array(307, 27)
+  pos_y = Array(64, 126, 188, 200)
+
+  If Abs(X - pos_x(0)) < 30 And Abs(Y - pos_y(0)) < 30 Then
+    Call copy_shape_replace
+  ElseIf Abs(X - pos_x(0)) < 30 And Abs(Y - pos_y(1)) < 30 Then
+    Call copy_shape_replace_resize
+  ElseIf Abs(X - pos_x(0)) < 30 And Abs(Y - pos_y(2)) < 30 Then
+    Call image_replace
+  ElseIf Abs(X - pos_x(1)) < 30 And Abs(Y - pos_y(3)) < 30 Then
+ '//   API.WebHelp "https://262235.xyz/index.php/tag/vba/"
+  End If
+  
+  Replace_UI.Hide
+End Sub
+
+
+Private Sub image_replace()
+  On Error GoTo ErrorHandler
+  API.BeginOpt
+  
+  Dim image_path As String
+  image_path = API.GetClipBoardString
+  ActiveDocument.ReferencePoint = cdrCenter
+  
+  Dim sh As Shape, shs As Shapes, cs As Shape
+  Dim X As Double, Y As Double
+  Set shs = ActiveSelection.Shapes
+  cnt = 0
+  For Each sh In shs
+    If cnt = 0 Then
+      ActiveDocument.ClearSelection
+      ActiveLayer.Import image_path
+      Set sc = ActiveSelection
+      cnt = 1
+    Else
+      sc.Duplicate 0, 0
+    End If
+    sh.GetPosition X, Y
+    sc.SetPosition X, Y
+    
+    sh.GetSize X, Y
+    sc.SetSize X, Y
+    sh.Delete
+    
+  Next sh
+
+ErrorHandler:
+'//    MsgBox "请先复制图片的完整路径，本工具能自动替换图片!"
+  API.EndOpt
+End Sub
+
+Private Sub copy_shape_replace_resize()
+  On Error GoTo ErrorHandler
+  API.BeginOpt
+
+  Set sr = ActiveSelectionRange
+  
+  If OptBt.value = True Then
+    If Select_A_Shape = True Then Set sc = ActiveSelectionRange(1)
+    OptBt.value = False
+  Else
+    Set sc = ActiveLayer.Paste
+    ActiveDocument.ClearSelection
+  End If
+
+  For Each s In sr.ReverseRange
+    vsh_SizeReplace sc, s
+  Next s
+  sc.Delete
+  
+ErrorHandler:
+  API.EndOpt
+End Sub
+
+Private Sub copy_shape_replace()
+  On Error GoTo ErrorHandler
+  API.BeginOpt
+
+  Set sr = ActiveSelectionRange
+  
+  If OptBt.value = True Then
+    If Select_A_Shape = True Then Set sc = ActiveSelectionRange(1)
+    OptBt.value = False
+  Else
+    Set sc = ActiveLayer.Paste
+    ActiveDocument.ClearSelection
+  End If
+  
+  For Each s In sr.ReverseRange
+    vsh_Replace sc, s
+  Next s
+  sc.Delete
+  
+ErrorHandler:
+  API.EndOpt
+End Sub
+
+'// 使用虚拟形状替换: 目标 dst 替换成 源物件src
+Private Function vsh_Replace(src, dst)
+  Dim X As Double, Y As Double
+  Dim vsh As Shape
+  
+  ' 获取 目标dst 形状的中心位置
+  dst.GetPositionEx cdrCenter, X, Y
+  
+  ' 创建 源物件src 虚拟副本，并将其定位到目标dst的中心位置
+  Set vsh = src.TreeNode.GetCopy().VirtualShape
+  vsh.SetPositionEx cdrCenter, X, Y
+  
+  ' 用虚拟形状替换第二个形状
+  dst.ReplaceWith vsh
+End Function
+
+'// 使用虚拟形状替换: 目标 dst 替换成 源物件src ，并且尺寸相同
+Private Function vsh_SizeReplace(src, dst)
+  Dim X As Double, Y As Double
+  Dim vsh As Shape
+  
+  ' 创建 源物件src 虚拟副本，并将其定位到目标dst的中心位置
+  Set vsh = src.TreeNode.GetCopy().VirtualShape
+  
+  ' 尺寸相同，中心点相同
+  dst.GetSize X, Y: vsh.SetSize X, Y
+  dst.GetPositionEx cdrCenter, X, Y
+  vsh.SetPositionEx cdrCenter, X, Y
+  
+  ' 用虚拟形状替换第二个形状
+  dst.ReplaceWith vsh
+End Function
+
+' 选择一个物件对象
+Private Function Select_A_Shape() As Boolean
+    Dim X As Double, Y As Double
+    Dim Shift As Long
+    Dim b As Boolean
+    Dim sel As Shape
+
+    b = False ' 初始化布尔变量以控制循环
+
+    ' 等待用户点击以选择对象
+    While Not b
+        b = ActiveDocument.GetUserClick(X, Y, Shift, 10, False, cdrCursorWeldSingle)
+
+        If Not b Then
+            ' 获取点击位置的对象
+            Set sel = ActiveDocument.ActivePage.SelectShapesAtPoint(X, Y, False)
+
+            ' 检查是否找到对象
+            If Not sel Is Nothing Then
+                Select_A_Shape = True ' 返回成功状态
+                Exit Function
+            Else
+                MsgBox "未找到对象，请在对象上点击。"
+            End If
+        End If
+    Wend
+    Select_A_Shape = False ' 返回失败状态
+End Function
