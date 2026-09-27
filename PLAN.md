@@ -40,13 +40,15 @@
 
 - [x] 方案文档（`../吊牌排版开源方案.md`，完整需求/流程/验收）
 - [x] 项目目录骨架 + 文档体系（PLAN/README/CHANGELOG/HANDOFF/.gitignore）
-- [ ] clone corelvba、vbabox 到 `upstream/`
-- [ ] 核对两仓库 LICENSE（corelvba 标注不一：渠成=Apache、OSCHINA=GPL，**必须看仓库 LICENSE 文件定论**）
-- [ ] 结构分析：GMS 文件清单、xslt/cdws 文件名、vbabox .bas 模块清单 → 写入 `docs/upstream-analysis.md`
-- [ ] 编写一键安装器 `installer/install.bat`（或 .ps1）：注册表检测 X4 路径 → 复制 GMS/xslt → 生成安装报告
-- [ ] 编写/验证"一键导入工具栏"宏说明
-- [ ] 自验证：脚本语法/逻辑检查 + 安装报告输出正确
-- [ ] Git 小步提交（Conventional Commits）
+- [x] clone corelvba、vbabox 到 `upstream/`（vendor 化，已提交 2f661f4）
+- [x] 核对 LICENSE → **结论：两仓库均无 LICENSE 文件**（第三方标注 Apache/GPL 不一致，默认保留所有权利，分发/商用前须联系作者；见 §8）
+- [x] 结构分析 → `docs/upstream-analysis.md`（GMS/xslt 为 release 产物；iss 注册表探测逻辑已记录）
+- [x] 编写一键安装器 `installer/install.ps1`（已提交 2944bfb；素材校验+注册表双视图探测+X4Root 回退+复制+报告）
+- [x] 自验证：语法 OK；dry-run 缺失分支 exit 1；模拟 X4 成功路径 exit 0（复制 5 项+报告）
+- [x] Git 小步提交（Conventional Commits，共 4 个提交）
+- [ ] **获取 GMS/xslt 素材**（作者渠道 lyvba.com / bbs.lyvba.com / 52cnp.com）放入 `installer/assets/`
+- [ ] **真实 X4 机器实测安装器**（本机无 CorelDRAW，需用户环境验证）
+- [ ] M2 真实稿件验证
 
 ## 5. 环境与关键事实（接手必读）
 

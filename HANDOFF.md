@@ -8,22 +8,20 @@
 
 ## 2. 当前状态（2026-09-28）
 
-- **M1 进行中**：文档体系已完成，尚未 clone 上游仓库、未写安装器。
-- 已完成：`../吊牌排版开源方案.md`（完整方案）、PLAN/README/CHANGELOG/HANDOFF/.gitignore、目录骨架。
+- **M1 进行中**：文档体系 ✅、上游 vendor 化 ✅、LICENSE 核对 ✅（两仓库均无 LICENSE）、安装器 ✅（自验证通过：语法/缺失分支/模拟成功路径）
+- 提交历史：`157f261` 文档初始化 → `2f661f4` 上游引入 → `29a6a88` 分析文档 → `2944bfb` 安装器
+- 已完成：`../吊牌排版开源方案.md`（完整方案）、`docs/upstream-analysis.md`、`installer/install.ps1`、`installer/assets/README.md`
 
 ## 3. 下一步（严格按序）
 
-1. clone 两仓库到 `upstream/`：
-   - `git clone https://github.com/hongwenjun/corelvba upstream/corelvba`
-   - `git clone https://github.com/hongwenjun/vbabox upstream/vbabox`
-2. **核对 LICENSE**：corelvba 标注不一（渠成=Apache、OSCHINA=GPL），以仓库 LICENSE 文件为准，结果写入 `docs/upstream-analysis.md`。
-3. 结构分析：列 GMS 文件、xslt/cdws 文件名、vbabox .bas 模块 → `docs/upstream-analysis.md`。
-4. 编写 `installer/install.bat`：
-   - 注册表探测 X4 安装路径（多键候选 + 手动回退）
-   - 复制 GMS 文件到 `Draw\GMS\`
-   - 复制 xslt 到对应目录
-   - 输出安装报告（装到哪、下一步人工动作）
-5. 自验证 → 更新 CHANGELOG/HANDOFF → Git 小步提交。
+1. **获取素材**：从作者渠道（lyvba.com / bbs.lyvba.com / 52cnp.com）下载 GMS 压缩包，解压后放入 `installer/assets/`：
+   `LYVBA.gms`、`Lanya_LinesTool.gms`、`ZeroBase.gms`、`蘭雅sRGB工具_导入CorelDRAW_X4.xslt`（可选 ColorMark.cdr/lycpg64.cpg/LYVBA 皮肤目录）
+2. **真实 X4 实测**：在装有 CorelDRAW X4 的机器运行
+   `powershell -ExecutionPolicy Bypass -File installer\install.ps1`
+   （本机开发环境无 CorelDRAW，路径探测与复制逻辑已用模拟目录验证）
+3. 打开 CDR → 运行导入宏 → 导入 xslt 工具栏 → 验证「蘭」图标与 vbabox 宏
+4. M2 真实稿件验证（≥3 SKU 订单 → 排版 PDF 交印刷端确认）
+5. 更新 CHANGELOG/HANDOFF/PLAN → 提交
 
 ## 4. 环境硬约束
 
