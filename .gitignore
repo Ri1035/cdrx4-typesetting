@@ -1,0 +1,29 @@
+# 依赖与构建
+node_modules/
+dist/
+.wrangler/
+
+# 环境变量与密钥（零密钥进仓库）
+.env*
+*.local
+*.token
+
+# 临时与日志
+*.log
+logs/
+tmp/
+temp/
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~
+
+# 安装产物（本项目的安装包输出）
+installer/*.zip
+installer/out/
+*.7z
+*.exe
