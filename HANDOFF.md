@@ -18,8 +18,10 @@
 
 ## 3. 下一步（严格按序）
 
-1. **（当前）M3 X4 实测**：`src/LanyaTagPack.bas` → VBE 文件→导入文件 → 另存 `LanyaTagPack.gms` 放入 `%APPDATA%\Corel\CorelDRAW Graphics Suite X4\User Draw\GMS` → 依次验证 TagMixPacking / TagAddBleed / TagCornerMarks / TagRemoveCornerMarks
-2. 验证通过后：`installer/install.ps1` 素材清单并入 LanyaTagPack.gms
+1. **（当前）M3 宏持久化**：用户已实测四宏正常但**未保存**（导入后未 Ctrl+S；当前宏目录 ZeroBase.gms=373,778 字节不含 LanyaTagPack 模块）→ 二选一：
+   - A（快）：VBE 内 Ctrl+S 保存到现有工程 → 宏目录 ZeroBase.gms 归档 assets/（含增强模块）
+   - B（规范，产品形态）：宏管理器新建独立宏文件 → 导入 `src/LanyaTagPack.bas` → 另存 `LanyaTagPack.gms` → 归档 assets/ → 安装器部署
+2. 并入安装器：`installer/install.ps1` 素材清单增加 LanyaTagPack.gms
 3. **M2 验收（推迟至此）**：≥3 SKU 真实稿件验证增强后完整流程 → PDF 交印刷端
 4. 可选：install.bat 一键入口
 5. M4 方案固化；同步文档后提交

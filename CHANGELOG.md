@@ -88,3 +88,9 @@
 - **静态自检通过**：Sub/EndSub 6/6、Function 1/1、If 块 11/11（另 8 个单行 If）、For/Next 9/9、括号配对 0、**PtrSafe/LongPtr = 0**（VBA6 兼容确认）
 - API 写法均取自上游源码实测模式（GetBoundingBox/SetPosition/CreateLineSegment/Outline.SetProperties 等，X4 兼容）
 - 待办：X4 实测 4 宏 → 并入安装器 → M2 一并验收
+
+### 2026-09-28 — M3 X4 实测通过（用户确认）
+
+- 4 个增强宏（TagMixPacking / TagAddBleed 双模式 / TagCornerMarks / TagRemoveCornerMarks）在 X4 实测**全部正常，无报错** ✅
+- **待办事项**：用户导入后未 Ctrl+S 保存 → 宏仅内存会话有效；需（A）保存至现有工程，或（B）宏管理器新建独立宏文件另存 `LanyaTagPack.gms` 后归档 assets/（并入一键安装器的最佳形态）
+- 待办：持久化归档 → 并入安装器 → M2 一并验收
