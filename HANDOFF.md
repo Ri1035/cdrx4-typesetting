@@ -8,18 +8,19 @@
 
 ## 2. 当前状态（2026-09-28）
 
-- **M1 近完成**：文档体系 ✅、上游 vendor 化 ✅、LICENSE 核对 ✅（两仓库均无 LICENSE）、**素材已获取** ✅（蓝奏云官方渠道 → `installer/assets/`，含 SOURCE.md）、**安装器 v2 已重写并自验证** ✅（语法/缺失分支/模拟+真实部署）、**本机真实 X4 部署成功** ✅（复制 6 项、退出码 0）
-- 提交历史：`157f261` 文档初始化 → `2f661f4` 上游引入 → `29a6a88` 分析文档 → `2944bfb` 安装器 v1 → （本轮：素材+安装器 v2+真实部署）
-- 已完成：`../吊牌排版开源方案.md`（完整方案）、`docs/upstream-analysis.md`、`installer/install.ps1`（v2）、`installer/assets/`（素材+SOURCE.md+README.md）
+- **M1 主体完成**：文档体系 ✅、上游 vendor 化 ✅、LICENSE 核对 ✅（两仓库均无 LICENSE）、**素材已获取** ✅（蓝奏云官方渠道 → `installer/assets/`，含 SOURCE.md）、**安装器 v2 已重写并自验证** ✅、**本机真实 X4 部署成功** ✅（复制 6 项、退出码 0）、**X4 GUI 加载验证** ✅（宏列表可见 AutoCutLines/ChatGPT/ZeroBase；工程树可见 LYVBA 模块）
+- **关键发现（阻塞 M1 收尾）**：2026 版 LYVBA GMS 含**裸 VBA7 语法**（API 模块 `Declare PtrSafe ... LongPtr`，PtrSafe 3 处），X4（VBA6）编译失败（"缺少: Sub 或 Function"）；字节级检查三 GMS 均无 #If VBA7 保护
+- 提交历史：`157f261` 文档初始化 → `2f661f4` 上游引入 → `29a6a88` 分析文档 → `2944bfb` 安装器 v1 → `d78b629` 素材+安装器 v2 → `8bd888d` 文档同步 → （本轮：GUI 实测发现+文档）
+- 已完成：`../吊牌排版开源方案.md`、`docs/upstream-analysis.md`、`installer/install.ps1`（v2）、`installer/assets/`（素材+SOURCE.md+README.md）
 
 ## 3. 下一步（严格按序）
 
-1. **（已完成）素材获取**：蓝奏云 `Lanya_CorelVBA_2026_0528.zip` → 官方安装器 Inno 静默解包 → `installer/assets/`
-2. **（已完成）真实 X4 实测**：本机装有 32 位 X4，安装器已实际部署至
-   `%APPDATA%\Corel\CorelDRAW Graphics Suite X4\User Draw\GMS`（退出码 0，6 项）
-3. **（待做）GUI 验证**：打开 CorelDRAW X4 → 工具→宏→宏管理器 → 展开 LYVBA 工程 → 运行 `Start`（打开主工具栏）；验证工具栏出现、无报错
-4. M2 真实稿件验证（≥3 SKU 订单 → 排版 PDF 交印刷端确认）
-5. 更新 CHANGELOG/HANDOFF/PLAN → 提交
+1. **（待决策）LYVBA X4 兼容修复**，二选一：
+   - **A（首选）**：联系作者（bbs.lyvba.com / lyvba.com）索取 X4 兼容旧版 GMS——作者声明支持 X4-X7，2026 版疑似未在 X4 实测；旧版替换 `installer/assets/LYVBA.gms` 后重跑安装器
+   - **B**：在 X4 VBE 内做 VBA6 修复：删 PtrSafe、`LongPtr`→`Long`（32 位下语义等价），保存为修正版 GMS，替换 assets 后重验
+2. **vbabox 运行验证**：Lanya_LinesTool.gms 含 PtrSafe 1 处（可能裸声明），在 X4 宏对话框运行一个排列宏确认
+3. M2 真实稿件验证（≥3 SKU 订单 → 排版 PDF 交印刷端确认）
+4. 更新 CHANGELOG/HANDOFF/PLAN → 提交
 
 ## 4. 环境硬约束
 

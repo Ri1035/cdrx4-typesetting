@@ -101,3 +101,14 @@ vbabox/
 - 安装器实测：命中 X4 用户宏目录，复制 6 项（LYVBA.gms、Lanya_LinesTool.gms、ColorMark.cdr、ZeroBase.gms、README-LYVBA.md、LYVBA\）✅ 退出码 0
 - 用户宏目录既有文件 `CDRX4Toolkit.gms` 未受影响（属用户已有插件）
 - 作者官方安装器解包时向 `C:\TSP\` 写入运行时（lyreg.exe/lyvba.dll 等，疑为 GMS 部分功能依赖），已记录未删除
+
+## 9. VBA6/VBA7 兼容性（X4 运行验证，2026-09-28 实测）
+
+- **X4 = 32 位 + VBA6**（VBE 6.x，无 PtrSafe/LongPtr 关键字）；高版本 CDR（2018+）= VBA7
+- **实测**：X4 宏对话框成功列出 AutoCutLines/ChatGPT/ZeroBase 宏（GMS 加载 OK），但运行 LYVBA.Start 编译失败："缺少: Sub 或 Function"
+- **根因**：GMS 内 API 模块第 6 行裸声明 `Public Declare PtrSafe Function SetFocus Lib "user32" (ByVal hWnd As LongPtr) As LongPtr`（VBA7 语法）；上游源码 zerobase/API.bas 与 module/API.bas 均用 `#If VBA7 Then` 条件编译保护（VBA6 兼容），但 **GMS 打包产物未保留保护**（作者新增裸语句或打包时展开）
+- **字节级检查**（ASCII 字节搜索）：LYVBA.gms PtrSafe×3、ZeroBase.gms ×3、Lanya_LinesTool.gms ×1；均未发现 `#If VBA7` 保护
+- **影响与对策**：
+  - X4 用户需要**作者 X4 兼容旧版**（作者宣称支持 X4-X7，2026 版疑似未在 X4 回归测试），或
+  - **VBA6 修复**：删 `PtrSafe`、`LongPtr`→`Long`（32 位语义等价），产出修正版 GMS
+  - vbabox（Lanya_LinesTool.gms）含 PtrSafe 1 处，需单独运行验证

@@ -30,3 +30,13 @@
 - **本机真实部署成功**：开发机装有 32 位 CorelDRAW X4（注册表 WOW6432Node\Corel\Setup\CorelDRAW Graphics Suite 14）；安装器实测命中用户宏目录、复制 6 项、退出码 0；用户既有 `CDRX4Toolkit.gms` 未受影响
 - 作者官方安装器向 `C:\TSP\` 写入运行时（lyreg.exe/lyvba.dll 等，疑为部分功能依赖），已记录未删除
 - 待办：打开 X4 GUI 验证宏加载（LYVBA 工程 Start）→ M2 真实稿件验证 → 更新 CHANGELOG/HANDOFF/PLAN 并提交
+
+### 2026-09-28 — M1 GUI 实测：LYVBA X4 兼容问题确认（关键发现）
+
+- **X4 GUI 实测完成**（本机 32 位 CorelDRAW X4 SP2 精简增强版）：
+  - 打开宏对话框：AutoCutLines / ChatGPT.* / ZeroBase 宏均列出 → **LYVBA.gms 与 ZeroBase.gms 被 X4 正常加载** ✅
+  - VBE 工程树：ZeroBase.gms 工程含 API/arrowtool/AutoCutLines/ChatGPT/Container/Hello_VBA/LYVBA/Tools/快捷键 模块；用户既有 CDRX4Toolkit.gms（arrowtool 宏）也在加载 ✅
+- **兼容性问题确认**：运行 LYVBA.Start → 编译错误"缺少: Sub 或 Function"；VBE 定位到 API 模块第 6 行 `Public Declare PtrSafe Function SetFocus Lib "user32" (ByVal hWnd As LongPtr) As LongPtr`——**VBA7 语法（PtrSafe/LongPtr），X4 内置 VBA6 不支持**；上游源码 zerobase/API.bas 用 `#If VBA7 Then` 条件编译但 GMS 内为裸声明（作者打包时未保留/新增裸语句）
+- 字节级检查：LYVBA.gms 含 PtrSafe 3 处、Lanya_LinesTool.gms 1 处、ZeroBase.gms 3 处，**均无 #If VBA7 保护** → 2026 版对 X4 的兼容性风险为普遍问题
+- **影响**：X4 用户需要（A）作者 X4 兼容旧版 GMS，或（B）VBE 内 VBA6 修复（删 PtrSafe、LongPtr→Long）
+- 待办：修复/换版决策 → vbabox 单独运行验证 → M2

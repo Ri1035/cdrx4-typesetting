@@ -48,7 +48,10 @@
 - [x] 自验证：语法 OK；dry-run 缺失分支 exit 1；模拟 X4 成功路径 exit 0（复制 6 项+报告）
 - [x] **获取素材**：作者蓝奏云官方分享（华印 thread-29658，密码 bf73）→ `Lanya_CorelVBA_2026_0528.zip`（2.4MB）→ 官方安装器 Inno 静默解包 → 归档 `installer/assets/`（LYVBA.gms / Lanya_LinesTool.gms / LYVBA\ / ColorMark.cdr / ZeroBase.gms / README-LYVBA.md + SOURCE.md）
 - [x] **真实 X4 机器实测安装器**：本机装有 32 位 CorelDRAW X4（WOW6432Node 注册表命中）→ 安装器实际部署 6 项至 X4 用户宏目录，退出码 0 ✅
-- [ ] **GUI 验证**：打开 X4 → 宏管理器 → LYVBA 工程 → 运行 `Start`（打开主工具栏、无报错）
+- [x] **GUI 加载验证**：X4 宏列表显示 AutoCutLines/ChatGPT/ZeroBase 宏（LYVBA.gms 被加载）；工程树可见 LYVBA 模块 ✅
+- [x] **GUI 运行验证（发现兼容问题）**：运行 LYVBA.Start 编译失败"缺少 Sub 或 Function"；定位根因 = API 模块第 6 行裸 `Public Declare PtrSafe ... LongPtr`（VBA7 语法），**X4 的 VBA6 不支持**；字节级检查确认三个 GMS 均含裸 PtrSafe（LYVBA 3 处、LinesTool 1 处）且无 #If VBA7 保护
+- [ ] **LYVBA X4 兼容修复**（二选一）：A) 联系作者索取 X4 兼容旧版 GMS（作者声明支持 X4-X7，2026 版疑似未在 X4 实测）；B) 在 VBE 内做 VBA6 修复（删 PtrSafe、LongPtr→Long）产出修正版 GMS
+- [ ] **vbabox（Lanya_LinesTool.gms）运行验证**：字节含 PtrSafe 1 处，需在 X4 运行确认
 - [ ] M2 真实稿件验证（≥3 SKU 订单 → 排版 PDF 交印刷端确认）
 
 ## 5. 环境与关键事实（接手必读）
@@ -87,6 +90,7 @@
 | 风险 | 影响 | 应对 |
 |---|---|---|
 | corelvba 许可证标注不一 | 商用合规 | clone 后核对 LICENSE；如 GPL 商用受限，内部使用或换方案 |
+| **2026 版 LYVBA GMS 含裸 VBA7 语法（PtrSafe/LongPtr），X4（VBA6）编译失败** | **X4 上插件不可用** | 联系作者索取 X4 兼容旧版（首选）；或 VBE 内做 VBA6 修复（删 PtrSafe、LongPtr→Long）产出修正版；vbabox 需单独运行验证 |
 | X4 安装路径检测失败 | 安装器不可用 | 注册表多键探测 + 手动指定路径回退 |
 | 安装包内含字体依赖 | 吊牌模板字体缺失 | 安装器附字体说明（参照条幅插件的方正大黑简体先例） |
 | 上游仓库中断维护 | 长期维护风险 | fork 保留，内部维护 |
