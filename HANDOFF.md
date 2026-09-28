@@ -18,10 +18,10 @@
 
 ## 3. 下一步（严格按序）
 
-1. **（当前）M3 计划与开发**：吊牌排版专用增强（候选：精确行列拼版、自动出血、角线组）——先与用户确认具体需求点；技术路线：独立 VBA 模块（VBA6 兼容，避开 PtrSafe/LongPtr），与 LYVBA 并存、不碰作者 GMS
-2. M3 开发 → X4 验证
-3. **M2 验收（用户决策推迟至此）**：≥3 SKU 真实稿件验证增强后完整流程 → PDF 交印刷端
-4. 可选：install.bat 一键入口（增强宏若为独立 GMS 需并入安装器）
+1. **（当前）M3 开发**：按 `docs/m3-enhancement-plan.md` 实现 4 个宏（TagMixPacking / TagAddBleed / TagCornerMarks / TagRemoveCornerMarks），独立 GMS（LanyaTagPack），VBA6 兼容，不碰作者 GMS；需求已确认（混拼/3mm 出血双模式/角线四角四边）
+2. M3 验证：X4 实测 → 并入安装器素材清单
+3. **M2 验收（推迟至此）**：≥3 SKU 真实稿件验证增强后完整流程 → PDF 交印刷端
+4. 可选：install.bat 一键入口
 5. M4 方案固化；同步文档后提交
 
 ## 4. 环境硬约束
