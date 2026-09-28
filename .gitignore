@@ -27,3 +27,6 @@ installer/*.zip
 installer/out/
 *.7z
 *.exe
+
+# 安装器运行报告
+installer/install-report.txt

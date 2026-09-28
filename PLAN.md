@@ -1,7 +1,7 @@
 # PLAN.md — 吊牌排版插件一键打包项目（cdrx4-typesetting）
 
 > 本文件是项目的**唯一事实源（source of truth）**。上下文压缩或会话切换后，接手者先读本文件恢复全部计划与状态。
-> 最后更新：2026-09-28（M1 启动）
+> 最后更新：2026-09-28（M1 素材获取+真实部署完成，待 GUI 验证）
 
 ---
 
@@ -44,21 +44,24 @@
 - [x] 核对 LICENSE → **结论：两仓库均无 LICENSE 文件**（第三方标注 Apache/GPL 不一致，默认保留所有权利，分发/商用前须联系作者；见 §8）
 - [x] 结构分析 → `docs/upstream-analysis.md`（GMS/xslt 为 release 产物；iss 注册表探测逻辑已记录）
 - [x] 编写一键安装器 `installer/install.ps1`（已提交 2944bfb；素材校验+注册表双视图探测+X4Root 回退+复制+报告）
-- [x] 自验证：语法 OK；dry-run 缺失分支 exit 1；模拟 X4 成功路径 exit 0（复制 5 项+报告）
-- [x] Git 小步提交（Conventional Commits，共 4 个提交）
-- [ ] **获取 GMS/xslt 素材**（作者渠道 lyvba.com / bbs.lyvba.com / 52cnp.com）放入 `installer/assets/`
-- [ ] **真实 X4 机器实测安装器**（本机无 CorelDRAW，需用户环境验证）
-- [ ] M2 真实稿件验证
+- [x] 安装器 v2 重写：素材清单修正（xslt 降为可选、LYVBA 目录必需）+ **X4 用户宏目录优先探测**（`%APPDATA%\Corel\CorelDRAW Graphics Suite X4\User Draw\GMS`）+ `User Draw\GMS` 子目录探测 + 人工步骤改为新版 Start 宏流程
+- [x] 自验证：语法 OK；dry-run 缺失分支 exit 1；模拟 X4 成功路径 exit 0（复制 6 项+报告）
+- [x] **获取素材**：作者蓝奏云官方分享（华印 thread-29658，密码 bf73）→ `Lanya_CorelVBA_2026_0528.zip`（2.4MB）→ 官方安装器 Inno 静默解包 → 归档 `installer/assets/`（LYVBA.gms / Lanya_LinesTool.gms / LYVBA\ / ColorMark.cdr / ZeroBase.gms / README-LYVBA.md + SOURCE.md）
+- [x] **真实 X4 机器实测安装器**：本机装有 32 位 CorelDRAW X4（WOW6432Node 注册表命中）→ 安装器实际部署 6 项至 X4 用户宏目录，退出码 0 ✅
+- [ ] **GUI 验证**：打开 X4 → 宏管理器 → LYVBA 工程 → 运行 `Start`（打开主工具栏、无报错）
+- [ ] M2 真实稿件验证（≥3 SKU 订单 → 排版 PDF 交印刷端确认）
 
 ## 5. 环境与关键事实（接手必读）
 
 - 主机：Windows，**shell 一律用 PowerShell 工具**（Bash 不可用，已验证报错）
 - 目标软件：CorelDRAW Graphics Suite X4（32 位；corelvba 支持 X4–最新版）
-- X4 GMS 目录示例：`C:\Program Files\Corel\CorelDRAW Graphics Suite X4\Draw\GMS\`（实际以注册表检测为准，不同版本路径不同）
+- **本机已装 32 位 X4**：注册表 `HKLM\SOFTWARE\WOW6432Node\Corel\Setup\CorelDRAW Graphics Suite 14` → `C:\Program Files (x86)\CorelDRAW X4\`
+- **X4 GMS 目录（官方推荐，安装器优先探测）**：`%APPDATA%\Corel\CorelDRAW Graphics Suite X4\User Draw\GMS`；兼容旧路径 `安装根目录\Draw\GMS`（安装器两者都查）
+- **新版安装方式（2026.05.28+）**：装 GMS 后宏管理器运行 **LYVBA 工程 `Start`** 即打开主工具栏；**不再需要 xslt**（xslt 为旧版流程，README 未同步）
 - 上游地址：
   - corelvba：https://github.com/hongwenjun/corelvba （Gitee 镜像 https://gitee.com/mirrors/CorelVBA）
   - vbabox：https://github.com/hongwenjun/vbabox
-- corelvba X4 工具栏导入文件：`蘭雅sRGB工具_导入CorelDRAW_X4.xslt`（README 确认；高版本为 .cdws）
+- 素材源：作者蓝奏云官方分享 `https://wwapl.lanzout.com/iK1lo3qi880j`（密码 bf73）；官方安装器无数字签名；归档见 `installer/assets/SOURCE.md`
 - vbabox 模块清单（README 确认）：ALGO.bas / API.bas / AverageDistance.bas / Box.bas / MirrorParalleHorizon.bas / RotateMoveDuplicate.bas / ThisMacroStorage.cls / Tools.bas / lines.bas / Form/ / img/ / LinesForm.frm(.frx)
 - 商业对标（非开源，功能参考）：CDR插件技术网"批量顺序拼版"、超平面"批量排版拼版"、魔镜插件"所有页重新排版"
 
@@ -73,12 +76,11 @@
 
 ## 7. 下一步动作（接手者按序执行）
 
-1. `git clone https://github.com/hongwenjun/corelvba upstream/corelvba`
-2. `git clone https://github.com/hongwenjun/vbabox upstream/vbabox`
-3. 读取两仓库 LICENSE 文件 → 记录到 `docs/upstream-analysis.md` 并更新本文件 ADR
-4. 列出 GMS/xslt/.bas 清单 → 写 `docs/upstream-analysis.md`
-5. 编写 `installer/install.bat`（检测注册表 `HKCU/HKLM\Software\...\Corel\CorelDRAW Graphics Suite X4\` 或已知安装路径；找不到则提示手动指定）
-6. 自验证 → 更新 CHANGELOG/HANDOFF → 提交
+1. **（进行中）GUI 验证**：打开 CorelDRAW X4（本机已装）→ 工具→宏→宏管理器 → 展开 LYVBA 工程 → 运行 `Start` → 确认主工具栏出现、无报错；其余模块抽查（如 Start_Dimension）
+2. 生成一键入口（install.bat 双击脚本，可选）
+3. M2：用 ≥3 SKU 真实吊牌订单稿件，在 X4 内走完整排版流程（多页合并/排序/对齐/拼版/角线/居中/微调）→ 输出 PDF 交印刷端确认
+4. M3（按需）：二次开发增强（精确行列拼版、自动出血、角线组）
+5. M4：方案固化封装团队可复用 skill；同步 CHANGELOG/HANDOFF 后提交
 
 ## 8. 风险清单
 

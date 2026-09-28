@@ -81,3 +81,23 @@ vbabox/
   - `蘭雅sRGB工具_导入CorelDRAW_X4.xslt`（X4 工具栏导入文件）
   - `LYVBA/` 目录（含多 DPI 皮肤）
   - `lycpg64.cpg`（64 位插件，X4 32 位可不装，可选）
+
+## 6. 素材已获取（2026-09-28 实测）
+
+- 作者蓝奏云官方分享（华印 thread-29658 发布帖）：`https://wwapl.lanzout.com/iK1lo3qi880j`（密码 bf73）
+- 包：`Lanya_CorelVBA_2026_0528.zip`（2.4MB，2026-05-27 发布），已下载并归档至 `installer/assets/`（见 `assets/SOURCE.md`）
+- 官方安装器 `Lanya_CorelVBA.exe`（Inno Setup 产物，无数字签名）用 `/VERYSILENT /DIR=<临时>` 解包提取 GMS
+- **解包实际清单**：LYVBA.gms、Lanya_LinesTool.gms、ColorMark.cdr、README-LYVBA.md、LYVBA/（含 100/125/150/175/200 皮肤）✅；ZeroBase.gms 在包内 optional/ ✅；**xslt 不在 2026 包内**
+
+## 7. 安装方式变更（重要，2026 版）
+
+- **donate.md 确认**：2026 版无需导入 xslt——安装 GMS 后，宏管理器展开 **LYVBA 工程，运行 `Start` 宏**即打开主工具栏（CorelVBA.bas: `Toolbar.Show 0`）；其余功能双击对应模块（如 `Start_Dimension`）
+- README 中 X4 导入 `蘭雅sRGB工具_导入CorelDRAW_X4.xslt` 为**旧版流程**（README 未同步更新）
+- **X4 宏目录**：corelvba.com 官方指引 = 用户目录 `%APPDATA%\Corel\CorelDRAW Graphics Suite X4\User Draw\GMS`（安装器 2a 探测已实现并实测命中）
+
+## 8. 本机真实部署结果（2026-09-28）
+
+- 开发机真实装有 **CorelDRAW X4（32 位）**：注册表 `HKLM:\SOFTWARE\WOW6432Node\Corel\Setup\CorelDRAW Graphics Suite 14` → `C:\Program Files (x86)\CorelDRAW X4\`
+- 安装器实测：命中 X4 用户宏目录，复制 6 项（LYVBA.gms、Lanya_LinesTool.gms、ColorMark.cdr、ZeroBase.gms、README-LYVBA.md、LYVBA\）✅ 退出码 0
+- 用户宏目录既有文件 `CDRX4Toolkit.gms` 未受影响（属用户已有插件）
+- 作者官方安装器解包时向 `C:\TSP\` 写入运行时（lyreg.exe/lyvba.dll 等，疑为 GMS 部分功能依赖），已记录未删除
