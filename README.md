@@ -8,8 +8,9 @@
 
 ## 当前状态
 
-- **里程碑**：M1（环境安装 + 双插件跑通）进行中
-- 2026-09-28：项目初始化，文档体系就绪，等待克隆上游仓库与编写安装器
+- **里程碑**：M1（双插件跑通）✅、M3（增强宏开发+实测+持久化）✅、M2（真实稿件验收）推迟至 M3 后一并验收
+- 2026-09-28：双插件 X4 实测正常（corelvba 尺寸标注 / vbabox LinesForm）；M3 吊牌增强宏四宏实测正常并**已保存进 ZeroBase.gms**（重启不丢）
+- 增强宏（`src/LanyaTagPack.bas`，M3 自研）：`TagMixPacking` 不同规格混拼 / `TagAddBleed` 自动出血 3mm（背景外扩+描边加一圈双模式）/ `TagCornerMarks` 四角四边套准十字+裁切角线 / `TagRemoveCornerMarks` 删除角线
 
 ## 目录结构
 

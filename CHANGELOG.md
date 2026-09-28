@@ -89,8 +89,10 @@
 - API 写法均取自上游源码实测模式（GetBoundingBox/SetPosition/CreateLineSegment/Outline.SetProperties 等，X4 兼容）
 - 待办：X4 实测 4 宏 → 并入安装器 → M2 一并验收
 
-### 2026-09-28 — M3 X4 实测通过（用户确认）
+### 2026-09-28 — M3 持久化完成（LanyaTagPack 已保存进 ZeroBase.gms）
 
-- 4 个增强宏（TagMixPacking / TagAddBleed 双模式 / TagCornerMarks / TagRemoveCornerMarks）在 X4 实测**全部正常，无报错** ✅
-- **待办事项**：用户导入后未 Ctrl+S 保存 → 宏仅内存会话有效；需（A）保存至现有工程，或（B）宏管理器新建独立宏文件另存 `LanyaTagPack.gms` 后归档 assets/（并入一键安装器的最佳形态）
-- 待办：持久化归档 → 并入安装器 → M2 一并验收
+- **持久化成功**：`LanyaTagPack` 模块已通过 VBE（文件→导入文件）导入 ZeroBase 工程并 **Ctrl+S 保存**；ZeroBase.gms 从 373,778 → **396,306 字节**（+22,528），修改时间 16:16:23
+- **文件级验证**：ASCII 扫描确认 LanyaTagPack / TagMixPacking / TagAddBleed / TagCornerMarks / TagRemoveCornerMarks / LY_TAG_MARKS / GetMarksLayer 全部写入 ✅ → **宏重启 X4 不丢失**
+- **归档**：持久化版已覆盖 `installer/assets/ZeroBase.gms`（SHA256 `CD93CBDBE05CFA341DE198B7DEB21A645FE39D691634089F5D5DF5CCFD444A28`，与用户宏目录一致）
+- **过程记录**：X4 宏菜单无"宏管理器"入口（X4 不支持 GUI 新建 GMS）；VBE 工程树坐标漂移 + 带锁工程（VersionConversion102 弹密码框）为导航陷阱；最终以"End 键定位 + 精确双击 ZeroBase 节点 → 文件→导入文件 → Ctrl+S"完成；**用户既有 CDRX4Toolkit.gms（168,978 字节）全程未被触碰**（含一次误导入后不保存退出）
+- 待办：并入安装器素材清单（install.ps1 标注 ZeroBase.gms 含 M3 增强宏）→ M2 一并验收 → 一键入口 install.bat（可选）→ M4

@@ -9,22 +9,21 @@
 ## 2. 当前状态（2026-09-28）
 
 - **M1 完成 ✅**：文档体系 ✅、上游 vendor 化 ✅、LICENSE 核对 ✅（两仓库均无 LICENSE）、素材获取 ✅、安装器 v2 + 真实部署 ✅（复制 6 项、exit 0）、GUI 加载验证 ✅、**双插件运行验证通过 ✅**
+- **M3 完成 ✅**：增强宏开发（`src/LanyaTagPack.bas` 4 宏）→ X4 实测四宏正常（用户确认）→ **持久化保存进 ZeroBase.gms**（VBE 导入 + Ctrl+S；文件 373,778→**396,306** 字节；重启不丢；已归档 assets/）
 - **运行验证结果**：
   - corelvba（ZeroBase.gms 方案 B 修复后）：`Tools.尺寸标注` 有反应、结果正确 ✅
   - vbabox（Lanya_LinesTool.gms）：`LinesForm by Lanya` 主面板弹出 ✅
   - `LYVBA.Start`：编译通过但无可见反应 → **已知限制**（Start 为皮肤入口空壳；作者声明 X4 不支持 lyvba32.dll 排序；功能宏不受影响）
-- 提交历史：`157f261` → `2f661f4` → `29a6a88` → `2944bfb` → `d78b629` → `8bd888d` → `c18d6de` → `679a6e0`（方案 B 修复）
-- 已完成交付物：`../吊牌排版开源方案.md`、`docs/upstream-analysis.md`、`installer/install.ps1`（v2）、`installer/assets/`（素材 + SOURCE.md + README.md + 修正版 ZeroBase.gms）
+  - M3 增强宏：TagMixPacking / TagAddBleed / TagCornerMarks / TagRemoveCornerMarks 全部正常 ✅
+- 提交历史：`157f261` → `2f661f4` → `29a6a88` → `2944bfb` → `d78b629` → `8bd888d` → `c18d6de` → `679a6e0`（方案 B 修复）→ `f8bef0d`（M1 完成）→ `3db4cc7`（GitHub 托管）→ `9c8ee08`（M2 推迟）→ `c02fe65`（M3 定案）→ `a634bb5`（M3 源码）→ `6dd7fea`（M3 实测通过）
+- 已完成交付物：`../吊牌排版开源方案.md`、`docs/upstream-analysis.md`、`docs/m3-enhancement-plan.md`、`installer/install.ps1`（v2）、`installer/assets/`（素材 + SOURCE.md + README.md + 含 M3 增强的 ZeroBase.gms）
 
 ## 3. 下一步（严格按序）
 
-1. **（当前）M3 宏持久化**：用户已实测四宏正常但**未保存**（导入后未 Ctrl+S；当前宏目录 ZeroBase.gms=373,778 字节不含 LanyaTagPack 模块）→ 二选一：
-   - A（快）：VBE 内 Ctrl+S 保存到现有工程 → 宏目录 ZeroBase.gms 归档 assets/（含增强模块）
-   - B（规范，产品形态）：宏管理器新建独立宏文件 → 导入 `src/LanyaTagPack.bas` → 另存 `LanyaTagPack.gms` → 归档 assets/ → 安装器部署
-2. 并入安装器：`installer/install.ps1` 素材清单增加 LanyaTagPack.gms
-3. **M2 验收（推迟至此）**：≥3 SKU 真实稿件验证增强后完整流程 → PDF 交印刷端
-4. 可选：install.bat 一键入口
-5. M4 方案固化；同步文档后提交
+1. **（当前）并入安装器素材清单**：`installer/install.ps1` 素材校验中 ZeroBase.gms 已更新为含 LanyaTagPack 的持久化版（396,306 字节，SHA256 `CD93CBDBE05CFA341DE198B7DEB21A645FE39D691634089F5D5DF5CCFD444A28`）——重跑 dry-run + 真机验证
+2. **M2 验收（推迟至此）**：≥3 SKU 真实稿件验证增强后完整流程 → PDF 交印刷端
+3. 可选：install.bat 一键入口
+4. M4 方案固化；同步文档后提交
 
 ## 4. 环境硬约束
 
@@ -60,6 +59,7 @@
 - **X4 宏目录在用户目录**：`%APPDATA%\Corel\CorelDRAW Graphics Suite X4\User Draw\GMS`，不是安装根目录 `Draw\GMS`（安装器 v2 已优先探测用户目录，同时保留根目录探测兼容旧安装方式）
 - **32 位 X4 注册表**：在 `HKLM\SOFTWARE\WOW6432Node\Corel\Setup\CorelDRAW Graphics Suite 14`（64 位视图可能查不到），安装器已双视图探测
 - 安装器若检测不到路径，必须提供手动指定目录的回退，不能静默失败（`-X4Root` 参数）
+- **VBE 工程树导航坑（M3 持久化实测）**：① X4 宏菜单**无"宏管理器"入口**（X4 不支持 GUI 新建 GMS）；② 工程树坐标随窗口漂移（每次布局变化需新截图定位）；③ 带锁工程 **VersionConversion102 紧邻 ZeroBase 上方**，双击/回车误触即弹密码框（Esc 取消，无副作用）；④ 键盘 End 只能跳选、**Enter 不激活工程**，激活必须双击工程节点；⑤ 导入文件对话框用 **Alt+N** 聚焦文件名框再输路径（点击输入框不稳）；⑥ 模块导入后 **Ctrl+S** 保存即写入 GMS（二进制复合文档，不可文本拼接/脚本注入）
 
 ## 8. 已完成交付物索引
 
