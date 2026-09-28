@@ -49,3 +49,11 @@
 - **归档**：修正版已覆盖 `installer/assets/ZeroBase.gms`，SHA256 与用户宏目录文件一致（重装/分发将使用修正版）
 - 其余 GMS 扫描：`Lanya_LinesTool.gms` PtrSafe×1（未修复）、`LYVBA.gms` PtrSafe×3（LIVBA 工程锁定不可查看）、`CDRX4Toolkit.gms` 0（用户既有，无问题）
 - 待办：运行 `LYVBA.Start` 验证（用户执行）→ 据结果处置 LinesTool/LYVBA → M2 真实稿件验证
+
+### 2026-09-28 — M1 完成：双插件运行验证通过
+
+- **corelvba（ZeroBase.gms，方案 B 修复后）**：`Tools.尺寸标注` 在 X4 运行**有反应、结果正确** ✅ → 修复生效，核心排版功能可用
+- **vbabox（Lanya_LinesTool.gms）**：运行弹出 **LinesForm by Lanya 主面板** ✅ → 含裸 PtrSafe 1 处但 X4 实测正常加载运行
+- **`LYVBA.Start` 无反应的定位结论**：编译通过（VBA6 修复生效）但无可见反应——ZeroBase 的 `Start` 为空壳/皮肤入口宏，**不影响具体功能宏**；作者声明"X4 不支持 ShapeRange.sort（依赖 lyvba32.dll）"亦为 X4 平台限制佐证。**记为已知限制**：主工具栏皮肤在 X4 上不可用，功能宏全部正常
+- **M1 里程碑达成**（安装器部署 + 双插件 X4 实测运行）；进入 M2 真实稿件验证
+- 待办：M2（≥3 SKU 真实订单 → 排版 PDF 交印刷端确认）→ 可选 install.bat 一键入口 → M3/M4

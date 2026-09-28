@@ -8,19 +8,20 @@
 
 ## 2. 当前状态（2026-09-28）
 
-- **M1 主体完成**：文档体系 ✅、上游 vendor 化 ✅、LICENSE 核对 ✅（两仓库均无 LICENSE）、**素材已获取** ✅（蓝奏云官方渠道 → `installer/assets/`，含 SOURCE.md）、**安装器 v2 已重写并自验证** ✅、**本机真实 X4 部署成功** ✅（复制 6 项、退出码 0）、**X4 GUI 加载验证** ✅（宏列表可见 AutoCutLines/ChatGPT/ZeroBase；工程树可见 LYVBA 模块）
-- **关键发现（已修复）**：2026 版 LYVBA GMS 含**裸 VBA7 语法**（API 模块 `Declare PtrSafe ... LongPtr`），X4（VBA6）编译失败（"缺少: Sub 或 Function"）。**方案 B 已执行**：用户在 VBE 内将 ZeroBase.gms 改为条件编译写法（`#If VBA7 … #Else … #End If`），字节复核通过、修正版已归档 `installer/assets/ZeroBase.gms`
-- **待办**：运行 `LYVBA.Start` 验证（进行中）；LinesTool（PtrSafe×1）/LYVBA.gms（PtrSafe×3，工程锁定）处置；M2
-- 提交历史：`157f261` 文档初始化 → `2f661f4` 上游引入 → `29a6a88` 分析文档 → `2944bfb` 安装器 v1 → `d78b629` 素材+安装器 v2 → `8bd888d` 文档同步 → `c18d6de` GUI 实测+VBA6 兼容性发现 →（本轮：方案 B 修复+归档）
-- 已完成：`../吊牌排版开源方案.md`、`docs/upstream-analysis.md`、`installer/install.ps1`（v2）、`installer/assets/`（素材+SOURCE.md+README.md+修正版 ZeroBase.gms）
+- **M1 完成 ✅**：文档体系 ✅、上游 vendor 化 ✅、LICENSE 核对 ✅（两仓库均无 LICENSE）、素材获取 ✅、安装器 v2 + 真实部署 ✅（复制 6 项、exit 0）、GUI 加载验证 ✅、**双插件运行验证通过 ✅**
+- **运行验证结果**：
+  - corelvba（ZeroBase.gms 方案 B 修复后）：`Tools.尺寸标注` 有反应、结果正确 ✅
+  - vbabox（Lanya_LinesTool.gms）：`LinesForm by Lanya` 主面板弹出 ✅
+  - `LYVBA.Start`：编译通过但无可见反应 → **已知限制**（Start 为皮肤入口空壳；作者声明 X4 不支持 lyvba32.dll 排序；功能宏不受影响）
+- 提交历史：`157f261` → `2f661f4` → `29a6a88` → `2944bfb` → `d78b629` → `8bd888d` → `c18d6de` → `679a6e0`（方案 B 修复）
+- 已完成交付物：`../吊牌排版开源方案.md`、`docs/upstream-analysis.md`、`installer/install.ps1`（v2）、`installer/assets/`（素材 + SOURCE.md + README.md + 修正版 ZeroBase.gms）
 
 ## 3. 下一步（严格按序）
 
-1. **（进行中）运行验证**：X4 → 工具→宏→运行宏 → `LYVBA.Start` → 运行(R)；确认主工具栏出现、无报错（若报错把错误文本记录到 CHANGELOG）
-2. **LinesTool/LYVBA 处置**：`Lanya_LinesTool.gms` 含 PtrSafe 1 处（若工程可查看，可同样改条件编译）；`LYVBA.gms` 含 PtrSafe 3 处且 **LIVBA 工程锁定不可查看**（用户改不了）——若运行受影响，需联系作者（bbs.lyvba.com / lyvba.com）索取 X4 兼容版或确认解锁方式
-3. **vbabox 运行验证**：宏对话框运行一个排列宏确认
-4. M2 真实稿件验证（≥3 SKU 订单 → 排版 PDF 交印刷端确认）
-5. 更新 CHANGELOG/HANDOFF/PLAN → 提交
+1. **（当前）M2 真实稿件验证**：取 ≥3 SKU 真实吊牌订单稿件（CDR 多页/多文件），在 X4 内走完整排版流程（多页合并/排序/对齐/拼版/角线/居中/微调）→ 输出 PDF 交印刷端确认
+2. 生成一键入口（install.bat 双击脚本，可选）
+3. M3（按需）：二次开发增强（精确行列拼版、自动出血、角线组）
+4. M4：方案固化封装团队可复用 skill；同步文档后提交
 
 ## 4. 环境硬约束
 

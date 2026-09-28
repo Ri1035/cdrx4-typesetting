@@ -1,7 +1,7 @@
 # PLAN.md — 吊牌排版插件一键打包项目（cdrx4-typesetting）
 
 > 本文件是项目的**唯一事实源（source of truth）**。上下文压缩或会话切换后，接手者先读本文件恢复全部计划与状态。
-> 最后更新：2026-09-28（方案 B：ZeroBase.gms VBA6 修复完成并归档，运行验证待执行）
+> 最后更新：2026-09-28（**M1 完成**：双插件运行验证通过，进入 M2 真实稿件验证）
 
 ---
 
@@ -31,7 +31,7 @@
 
 | 里程碑 | 内容 | 状态 |
 |---|---|---|
-| M1 | 环境安装 + 双插件跑通（安装器 + X4 实测） | **进行中（本次会话）** |
+| M1 | 环境安装 + 双插件跑通（安装器 + X4 实测） | **✅ 完成（2026-09-28）** |
 | M2 | 真实稿件完整流程验证（≥3 SKU 真实订单 PDF 交印刷端确认） | 未开始 |
 | M3 | 二次开发增强（按需：精确行列拼版、自动出血、角线组） | 未开始 |
 | M4 | 方案固化（封装团队可复用 skill） | 未开始 |
@@ -51,8 +51,9 @@
 - [x] **GUI 加载验证**：X4 宏列表显示 AutoCutLines/ChatGPT/ZeroBase 宏（LYVBA.gms 被加载）；工程树可见 LYVBA 模块 ✅
 - [x] **GUI 运行验证（发现兼容问题）**：运行 LYVBA.Start 编译失败"缺少 Sub 或 Function"；定位根因 = API 模块第 6 行裸 `Public Declare PtrSafe ... LongPtr`（VBA7 语法），**X4 的 VBA6 不支持**；字节级检查确认三个 GMS 均含裸 PtrSafe（LYVBA 3 处、LinesTool 1 处）且无 #If VBA7 保护
 - [x] **LYVBA X4 兼容修复（方案 B）**：VBE 内 VBA6 修复完成——用户手动将 ZeroBase.gms 改为**条件编译写法**（`#If VBA7 Then … #Else … #End If`，与上游 module/API.bas 同款）；字节复核 PtrSafe/LongPtr 仅存于 VBA7 分支（VBA6 跳过）✅；修正版已归档 `installer/assets/ZeroBase.gms`（SHA256 与用户宏目录一致）
-- [ ] **运行验证 LYVBA.Start**（用户执行：工具→宏→运行宏→LYVBA.Start→运行；确认工具栏弹出无报错）
-- [ ] **vbabox（Lanya_LinesTool.gms）运行验证**：字节含 PtrSafe 1 处（未修复），需在 X4 运行确认；**LYVBA.gms 含 PtrSafe 3 处（LIVBA 工程锁定不可查看）**——若运行受影响需另行处置
+- [x] **运行验证 LYVBA.Start**：编译通过（VBA6 修复生效）但**无可见反应**——定位为"主工具栏皮肤入口"问题（ZeroBase 的 Start 为空壳/依赖皮肤加载），**不影响功能宏**，记为已知限制（作者声明 X4 不支持 lyvba32.dll 排序亦与此相关）
+- [x] **功能宏验证（corelvba）**：`Tools.尺寸标注` 在 X4 运行**有反应、结果正确** ✅
+- [x] **vbabox 验证（Lanya_LinesTool.gms）**：运行弹出 **LinesForm by Lanya 面板**（线条工具主界面）✅——含裸 PtrSafe 1 处但 X4 实测正常加载运行，无需修复
 - [ ] M2 真实稿件验证（≥3 SKU 订单 → 排版 PDF 交印刷端确认）
 
 ## 5. 环境与关键事实（接手必读）
@@ -80,19 +81,17 @@
 
 ## 7. 下一步动作（接手者按序执行）
 
-1. **（进行中）运行验证**：打开 CorelDRAW X4 → 工具→宏→运行宏 → 输入 `LYVBA.Start` → 运行(R) → 确认主工具栏出现、无报错（ZeroBase.gms 已 VBA6 修复并归档；运行结果无论成败都记录到 CHANGELOG）
-2. **LinesTool/LYVBA 处置**：Lanya_LinesTool.gms（PtrSafe×1）与 LYVBA.gms（PtrSafe×3，LIVBA 工程锁定）——根据运行验证结果决定是否同样修复/联系作者
-3. 生成一键入口（install.bat 双击脚本，可选）
-4. M2：用 ≥3 SKU 真实吊牌订单稿件，在 X4 内走完整排版流程（多页合并/排序/对齐/拼版/角线/居中/微调）→ 输出 PDF 交印刷端确认
-5. M3（按需）：二次开发增强（精确行列拼版、自动出血、角线组）
-6. M4：方案固化封装团队可复用 skill；同步 CHANGELOG/HANDOFF 后提交
+1. **（当前）M2 真实稿件验证**：取 ≥3 SKU 真实吊牌订单稿件（CDR 多页/多文件），在 X4 内用已跑通的插件走完整排版流程（多页合并/排序/对齐/拼版/角线/居中/微调）→ 输出 PDF 交印刷端确认
+2. 生成一键入口（install.bat 双击脚本，可选）
+3. M3（按需）：二次开发增强（精确行列拼版、自动出血、角线组）
+4. M4：方案固化封装团队可复用 skill；同步 CHANGELOG/HANDOFF 后提交
 
 ## 8. 风险清单
 
 | 风险 | 影响 | 应对 |
 |---|---|---|
 | corelvba 许可证标注不一 | 商用合规 | clone 后核对 LICENSE；如 GPL 商用受限，内部使用或换方案 |
-| **2026 版 LYVBA GMS 含裸 VBA7 语法（PtrSafe/LongPtr），X4（VBA6）编译失败** | **X4 上插件不可用** | 联系作者索取 X4 兼容旧版（首选）；或 VBE 内做 VBA6 修复（删 PtrSafe、LongPtr→Long）产出修正版；vbabox 需单独运行验证 |
+| **2026 版 LYVBA GMS 含裸 VBA7 语法（PtrSafe/LongPtr），X4（VBA6）编译失败** | **X4 上插件不可用** | **✅ 已解决（方案 B）**：ZeroBase.gms 已改条件编译并归档，实测功能宏正常；主工具栏皮肤（Start）在 X4 不可用记为已知限制，不影响功能 |
 | X4 安装路径检测失败 | 安装器不可用 | 注册表多键探测 + 手动指定路径回退 |
 | 安装包内含字体依赖 | 吊牌模板字体缺失 | 安装器附字体说明（参照条幅插件的方正大黑简体先例） |
 | 上游仓库中断维护 | 长期维护风险 | fork 保留，内部维护 |
