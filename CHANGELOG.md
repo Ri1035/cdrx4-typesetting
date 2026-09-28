@@ -40,3 +40,12 @@
 - 字节级检查：LYVBA.gms 含 PtrSafe 3 处、Lanya_LinesTool.gms 1 处、ZeroBase.gms 3 处，**均无 #If VBA7 保护** → 2026 版对 X4 的兼容性风险为普遍问题
 - **影响**：X4 用户需要（A）作者 X4 兼容旧版 GMS，或（B）VBE 内 VBA6 修复（删 PtrSafe、LongPtr→Long）
 - 待办：修复/换版决策 → vbabox 单独运行验证 → M2
+
+### 2026-09-28 — 方案 B：ZeroBase.gms VBA6 修复完成（文件级验证通过）
+
+- 用户选定**方案 B**（VBE 内 VBA6 修复）。GUI 自动化因 X4 菜单坐标漂移 + 中文输入法拦截键盘受阻（60+ 轮尝试，未改动任何用户既有插件文件），由用户手动在 VBE 完成修复
+- 实际修复方式：**条件编译写法**——`#If VBA7 Then … #Else … #End If`（与上游 `module/API.bas` / `zerobase/API.bas` 同款），比简单删除 PtrSafe 更优（保留新版运行路径、兼容旧版）
+- **字节级复核**（用户 15:00 保存后）：ZeroBase.gms 373,778 字节；`PtrSafe`/`LongPtr` 各残留 1 处，均位于 `#If VBA7` 分支内（VBA6 编译跳过）✅；`#If VBA7` 出现 2 处（另一处为 AutoCutLines 等模块既有条件编译）
+- **归档**：修正版已覆盖 `installer/assets/ZeroBase.gms`，SHA256 与用户宏目录文件一致（重装/分发将使用修正版）
+- 其余 GMS 扫描：`Lanya_LinesTool.gms` PtrSafe×1（未修复）、`LYVBA.gms` PtrSafe×3（LIVBA 工程锁定不可查看）、`CDRX4Toolkit.gms` 0（用户既有，无问题）
+- 待办：运行 `LYVBA.Start` 验证（用户执行）→ 据结果处置 LinesTool/LYVBA → M2 真实稿件验证

@@ -1,7 +1,7 @@
 # PLAN.md — 吊牌排版插件一键打包项目（cdrx4-typesetting）
 
 > 本文件是项目的**唯一事实源（source of truth）**。上下文压缩或会话切换后，接手者先读本文件恢复全部计划与状态。
-> 最后更新：2026-09-28（M1 素材获取+真实部署完成，待 GUI 验证）
+> 最后更新：2026-09-28（方案 B：ZeroBase.gms VBA6 修复完成并归档，运行验证待执行）
 
 ---
 
@@ -50,8 +50,9 @@
 - [x] **真实 X4 机器实测安装器**：本机装有 32 位 CorelDRAW X4（WOW6432Node 注册表命中）→ 安装器实际部署 6 项至 X4 用户宏目录，退出码 0 ✅
 - [x] **GUI 加载验证**：X4 宏列表显示 AutoCutLines/ChatGPT/ZeroBase 宏（LYVBA.gms 被加载）；工程树可见 LYVBA 模块 ✅
 - [x] **GUI 运行验证（发现兼容问题）**：运行 LYVBA.Start 编译失败"缺少 Sub 或 Function"；定位根因 = API 模块第 6 行裸 `Public Declare PtrSafe ... LongPtr`（VBA7 语法），**X4 的 VBA6 不支持**；字节级检查确认三个 GMS 均含裸 PtrSafe（LYVBA 3 处、LinesTool 1 处）且无 #If VBA7 保护
-- [ ] **LYVBA X4 兼容修复**（二选一）：A) 联系作者索取 X4 兼容旧版 GMS（作者声明支持 X4-X7，2026 版疑似未在 X4 实测）；B) 在 VBE 内做 VBA6 修复（删 PtrSafe、LongPtr→Long）产出修正版 GMS
-- [ ] **vbabox（Lanya_LinesTool.gms）运行验证**：字节含 PtrSafe 1 处，需在 X4 运行确认
+- [x] **LYVBA X4 兼容修复（方案 B）**：VBE 内 VBA6 修复完成——用户手动将 ZeroBase.gms 改为**条件编译写法**（`#If VBA7 Then … #Else … #End If`，与上游 module/API.bas 同款）；字节复核 PtrSafe/LongPtr 仅存于 VBA7 分支（VBA6 跳过）✅；修正版已归档 `installer/assets/ZeroBase.gms`（SHA256 与用户宏目录一致）
+- [ ] **运行验证 LYVBA.Start**（用户执行：工具→宏→运行宏→LYVBA.Start→运行；确认工具栏弹出无报错）
+- [ ] **vbabox（Lanya_LinesTool.gms）运行验证**：字节含 PtrSafe 1 处（未修复），需在 X4 运行确认；**LYVBA.gms 含 PtrSafe 3 处（LIVBA 工程锁定不可查看）**——若运行受影响需另行处置
 - [ ] M2 真实稿件验证（≥3 SKU 订单 → 排版 PDF 交印刷端确认）
 
 ## 5. 环境与关键事实（接手必读）
@@ -79,11 +80,12 @@
 
 ## 7. 下一步动作（接手者按序执行）
 
-1. **（进行中）GUI 验证**：打开 CorelDRAW X4（本机已装）→ 工具→宏→宏管理器 → 展开 LYVBA 工程 → 运行 `Start` → 确认主工具栏出现、无报错；其余模块抽查（如 Start_Dimension）
-2. 生成一键入口（install.bat 双击脚本，可选）
-3. M2：用 ≥3 SKU 真实吊牌订单稿件，在 X4 内走完整排版流程（多页合并/排序/对齐/拼版/角线/居中/微调）→ 输出 PDF 交印刷端确认
-4. M3（按需）：二次开发增强（精确行列拼版、自动出血、角线组）
-5. M4：方案固化封装团队可复用 skill；同步 CHANGELOG/HANDOFF 后提交
+1. **（进行中）运行验证**：打开 CorelDRAW X4 → 工具→宏→运行宏 → 输入 `LYVBA.Start` → 运行(R) → 确认主工具栏出现、无报错（ZeroBase.gms 已 VBA6 修复并归档；运行结果无论成败都记录到 CHANGELOG）
+2. **LinesTool/LYVBA 处置**：Lanya_LinesTool.gms（PtrSafe×1）与 LYVBA.gms（PtrSafe×3，LIVBA 工程锁定）——根据运行验证结果决定是否同样修复/联系作者
+3. 生成一键入口（install.bat 双击脚本，可选）
+4. M2：用 ≥3 SKU 真实吊牌订单稿件，在 X4 内走完整排版流程（多页合并/排序/对齐/拼版/角线/居中/微调）→ 输出 PDF 交印刷端确认
+5. M3（按需）：二次开发增强（精确行列拼版、自动出血、角线组）
+6. M4：方案固化封装团队可复用 skill；同步 CHANGELOG/HANDOFF 后提交
 
 ## 8. 风险清单
 
