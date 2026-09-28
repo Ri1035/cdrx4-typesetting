@@ -13,6 +13,9 @@
 #    -DryRun    仅检测与报告，不执行复制
 #
 #  退出码: 0=成功  1=素材缺失  2=未找到 X4  3=复制失败
+#
+#  素材版本: Lanya_CorelVBA_2026_0528（2026-05-27 发布，作者蓝奏云官方分享）
+#  安装方式: 新版无需导入 xslt —— 装 GMS 后在宏管理器运行 LYVBA 工程 "Start"
 # ============================================================
 param(
     [string]$AssetsDir = "",
@@ -32,35 +35,33 @@ Log " 吊牌排版插件: corelvba + vbabox -> CorelDRAW X4"
 Log "=============================================="
 
 # ---------- 1. 素材校验 ----------
-$requiredAssets = @(
-    "LYVBA.gms",
-    "Lanya_LinesTool.gms",
-    "ZeroBase.gms",
-    "蘭雅sRGB工具_导入CorelDRAW_X4.xslt"
-)
-$optionalAssets = @("ColorMark.cdr", "lycpg64.cpg", "README-LYVBA.md")
+$requiredAssets = @("LYVBA.gms", "Lanya_LinesTool.gms")
+$requiredDirs = @("LYVBA")
+$optionalAssets = @("ColorMark.cdr", "ZeroBase.gms", "README-LYVBA.md", "蘭雅sRGB工具_导入CorelDRAW_X4.xslt")
 $missing = @()
 foreach ($f in $requiredAssets) {
     if (-not (Test-Path (Join-Path $AssetsDir $f))) { $missing += $f }
+}
+foreach ($d in $requiredDirs) {
+    if (-not (Test-Path (Join-Path $AssetsDir $d))) { $missing += "$d\（目录）" }
 }
 if ($missing.Count -gt 0) {
     Log "[错误] 素材缺失，安装中止："
     foreach ($f in $missing) { Log "  - 缺少: $f" }
     Log ""
-    Log "获取指引：GMS/xslt 为作者发布产物，源码仓库不含。请从以下渠道获取后解压放入：$AssetsDir"
-    Log "  - 作者网站: https://lyvba.com/"
-    Log "  - 论坛: https://bbs.lyvba.com/  （作者发布帖内含 GMS 压缩包）"
-    Log "  - 华印论坛: https://www.52cnp.com/  （蘭雅CorelVBA发布帖）"
-    Log "需要的文件：LYVBA.gms / Lanya_LinesTool.gms / ZeroBase.gms / 蘭雅sRGB工具_导入CorelDRAW_X4.xslt"
+    Log "获取指引：请从作者官方渠道下载 Lanya_CorelVBA 压缩包，解压后放入：$AssetsDir"
+    Log "  - 作者论坛: https://bbs.lyvba.com/ （蘭雅CorelVBA发布帖，内含蓝奏云链接）"
+    Log "  - 作者网站: https://lyvba.com/ / 华印: https://www.52cnp.com/"
+    Log "需要的文件：LYVBA.gms / Lanya_LinesTool.gms / LYVBA\ 目录"
     $reportLines | Set-Content -Path (Join-Path $here "install-report.txt") -Encoding UTF8
     exit 1
 }
-Log "[OK] 必需素材齐备（$($requiredAssets.Count) 个）"
+Log "[OK] 必需素材齐备（$($requiredAssets.Count) 文件 + $($requiredDirs.Count) 目录）"
 foreach ($f in $optionalAssets) {
     if (Test-Path (Join-Path $AssetsDir $f)) { Log "  - 可选素材存在: $f" }
 }
 
-# ---------- 2. 定位 CorelDRAW 安装目录 ----------
+# ---------- 2. 定位 CorelDRAW 宏目录 ----------
 function Find-GmsDirFromRoot {
     param([string]$root)
     $current = $root
@@ -68,33 +69,39 @@ function Find-GmsDirFromRoot {
         if (-not $current -or -not (Test-Path $current)) { break }
         $cand = Join-Path $current "Draw\GMS"
         if (Test-Path $cand) { return $cand }
+        $cand2 = Join-Path $current "User Draw\GMS"
+        if (Test-Path $cand2) { return $cand2 }
         $current = Split-Path $current -Parent
     }
     return $null
 }
 
 $gmsDir = $null
-if ($X4Root) {
-    Log "[信息] 使用手动指定目录: $X4Root"
-    $gmsDir = Find-GmsDirFromRoot $X4Root
-    if (-not $gmsDir) { Log "[警告] 指定目录下未找到 Draw\GMS" }
+
+# 2a. X4 用户宏目录（官方推荐：AppData\Roaming\Corel\CorelDRAW Graphics Suite X4\User Draw\GMS）
+$userGms = Join-Path $env:APPDATA "Corel\CorelDRAW Graphics Suite X4\User Draw\GMS"
+if (Test-Path $userGms) {
+    Log "[OK] 发现 X4 用户宏目录: $userGms"
+    $gmsDir = $userGms
 }
 
+# 2b. 手动指定
+if (-not $gmsDir -and $X4Root) {
+    Log "[信息] 使用手动指定目录: $X4Root"
+    $gmsDir = Find-GmsDirFromRoot $X4Root
+    if (-not $gmsDir) { Log "[警告] 指定目录下未找到 Draw\GMS 或 User Draw\GMS" }
+}
+
+# 2c. 注册表探测（HKLM64 + 32 位视图）
 if (-not $gmsDir) {
     $views = @("HKLM:\SOFTWARE\Corel\Setup", "HKLM:\SOFTWARE\WOW6432Node\Corel\Setup")
     $suiteNames = @(
-        "CorelDRAW Graphics Suite 14",   # X4
-        "CorelDRAW Graphics Suite 15",   # X5
-        "CorelDRAW Graphics Suite 16",   # X6
-        "CorelDRAW Graphics Suite 17",   # X7
-        "CorelDRAW Graphics Suite 2018",
-        "CorelDRAW Graphics Suite 2019",
-        "CorelDRAW Graphics Suite 2020",
-        "CorelDRAW Graphics Suite 2021",
-        "CorelDRAW Graphics Suite 2022",
-        "CorelDRAW Graphics Suite 2023",
-        "CorelDRAW Graphics Suite 2024",
-        "CorelDRAW Graphics Suite 2025",
+        "CorelDRAW Graphics Suite 14", "CorelDRAW Graphics Suite 15",
+        "CorelDRAW Graphics Suite 16", "CorelDRAW Graphics Suite 17",
+        "CorelDRAW Graphics Suite 2018", "CorelDRAW Graphics Suite 2019",
+        "CorelDRAW Graphics Suite 2020", "CorelDRAW Graphics Suite 2021",
+        "CorelDRAW Graphics Suite 2022", "CorelDRAW Graphics Suite 2023",
+        "CorelDRAW Graphics Suite 2024", "CorelDRAW Graphics Suite 2025",
         "CorelDRAW Graphics Suite 2026"
     )
     foreach ($view in $views) {
@@ -138,9 +145,11 @@ if ($DryRun) {
                 $copied += $f
             }
         }
-        if (Test-Path (Join-Path $AssetsDir "LYVBA")) {
-            Copy-Item -Path (Join-Path $AssetsDir "LYVBA") -Destination $gmsDir -Recurse -Force
-            $copied += "LYVBA\（目录）"
+        foreach ($d in $requiredDirs) {
+            if (Test-Path (Join-Path $AssetsDir $d)) {
+                Copy-Item -Path (Join-Path $AssetsDir $d) -Destination $gmsDir -Recurse -Force
+                $copied += "$d\（目录）"
+            }
         }
     } catch {
         Log "[错误] 复制失败: $($_.Exception.Message)"
@@ -151,14 +160,15 @@ if ($DryRun) {
     foreach ($c in $copied) { Log "  - $c" }
 }
 
-# ---------- 4. 下一步人工动作 ----------
+# ---------- 4. 下一步人工动作（新版流程，无需 xslt） ----------
 Log ""
 Log "=============================================="
-Log " 下一步（人工，约 10 秒，CDR 机制限制）:"
+Log " 下一步（人工，约 10 秒）:"
 Log "  1. 打开 CorelDRAW X4"
-Log "  2. 菜单: 工具 -> 宏 -> 宏管理器，运行「蘭雅」导入宏"
-Log "  3. 导入工具栏文件: 蘭雅sRGB工具_导入CorelDRAW_X4.xslt"
-Log "  4. 右键工具栏区域，打开「蘭」工具栏，点击图标启动"
+Log "  2. 菜单: 工具 -> 宏 -> 宏管理器"
+Log "  3. 展开 LYVBA 工程，双击/运行 'Start'（打开主工具栏）"
+Log "  4. 其余功能：双击 LYVBA 工程下对应模块（如 Start_Dimension 等）"
+Log "  （若使用旧版包且含 xslt，另需: 工具->宏->运行宏导入 蘭雅sRGB工具_导入CorelDRAW_X4.xslt）"
 Log "=============================================="
 
 $reportLines | Set-Content -Path (Join-Path $here "install-report.txt") -Encoding UTF8
