@@ -18,8 +18,8 @@
 
 ## 3. 下一步（严格按序）
 
-1. **（当前）M3 开发**：按 `docs/m3-enhancement-plan.md` 实现 4 个宏（TagMixPacking / TagAddBleed / TagCornerMarks / TagRemoveCornerMarks），独立 GMS（LanyaTagPack），VBA6 兼容，不碰作者 GMS；需求已确认（混拼/3mm 出血双模式/角线四角四边）
-2. M3 验证：X4 实测 → 并入安装器素材清单
+1. **（当前）M3 X4 实测**：`src/LanyaTagPack.bas` → VBE 文件→导入文件 → 另存 `LanyaTagPack.gms` 放入 `%APPDATA%\Corel\CorelDRAW Graphics Suite X4\User Draw\GMS` → 依次验证 TagMixPacking / TagAddBleed / TagCornerMarks / TagRemoveCornerMarks
+2. 验证通过后：`installer/install.ps1` 素材清单并入 LanyaTagPack.gms
 3. **M2 验收（推迟至此）**：≥3 SKU 真实稿件验证增强后完整流程 → PDF 交印刷端
 4. 可选：install.bat 一键入口
 5. M4 方案固化；同步文档后提交

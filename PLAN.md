@@ -33,7 +33,7 @@
 |---|---|---|
 | M1 | 环境安装 + 双插件跑通（安装器 + X4 实测） | **✅ 完成（2026-09-28）** |
 | M2 | 真实稿件完整流程验证（≥3 SKU 真实订单 PDF 交印刷端确认） | **推迟**（用户决策：M3 完成后与增强版一并验收，避免重复验证被 M3 覆盖的流程） |
-| M3 | 二次开发增强（按需：精确行列拼版、自动出血、角线组） | **方案定案（2026-09-28）**：需求已确认（混拼/3mm 出血双模式/角线四角四边）；设计文档 `docs/m3-enhancement-plan.md`；开发待开始 |
+| M3 | 二次开发增强（按需：精确行列拼版、自动出血、角线组） | **开发完成（2026-09-28）**：需求已确认（混拼/3mm 出血双模式/角线四角四边）；设计文档 `docs/m3-enhancement-plan.md`；源码 `src/LanyaTagPack.bas`（4 宏，VBA6 兼容，静态自检通过）；待 X4 实测 |
 | M4 | 方案固化（封装团队可复用 skill） | 未开始 |
 
 ## 4. M1 任务清单与进度
@@ -81,8 +81,8 @@
 
 ## 7. 下一步动作（接手者按序执行）
 
-1. **（当前）M3 开发**：按 `docs/m3-enhancement-plan.md` 实现 4 个宏（TagMixPacking / TagAddBleed / TagCornerMarks / TagRemoveCornerMarks），独立 GMS（LanyaTagPack），VBA6 兼容；源码在 `src/`（或 scripts/）下
-2. M3 验证：X4 实测三个宏（模拟吊牌对象 → 混拼/出血/角线 → 检查结果）→ 并入安装器素材清单
+1. **（当前）M3 X4 实测**：`src/LanyaTagPack.bas` 导入 X4（VBE 文件→导入文件，另存为 `LanyaTagPack.gms` 放 X4 GMS 目录）→ 依次验证 TagMixPacking / TagAddBleed / TagCornerMarks / TagRemoveCornerMarks
+2. 验证通过后：并入安装器素材清单（install.ps1 增加 LanyaTagPack.gms）
 3. **M2 验收（推迟至此）**：取 ≥3 SKU 真实吊牌订单稿件，验证**增强后**的完整排版流程 → 输出 PDF 交印刷端确认
 4. 生成一键入口（install.bat 双击脚本，可选）
 5. M4：方案固化封装团队可复用 skill；同步 CHANGELOG/HANDOFF 后提交

@@ -77,3 +77,14 @@
 - 设计文档 `docs/m3-enhancement-plan.md` 定案：4 个宏（TagMixPacking 混拼 / TagAddBleed 出血 / TagCornerMarks 角线 / TagRemoveCornerMarks 删除），独立 GMS（LanyaTagPack），Shelf 矩形打包算法，参数默认值（出血 3mm、间距 6mm、角线外延 5mm 线长 8mm 线宽 0.1mm）
 - 全部宏为**本项目自研**（非作者产物，无 LICENSE 风险）
 - 待办：M3 开发（VBA6 源码）→ X4 验证 → 并入安装器 → M2 一并验收
+
+### 2026-09-28 — M3 源码完成（静态自检通过）
+
+- **`src/LanyaTagPack.bas` 编写完成**：4 个公开宏 + 3 个私有辅助，单文件交付（VBE 导入即可）
+  - `TagMixPacking`：Shelf 矩形打包混拼（按面积降序，输入大版宽/高/间距）
+  - `TagAddBleed`：自动出血（模式1 背景矩形中心不动四边外扩；模式2 生成扩展底色块置底）
+  - `TagCornerMarks`：角线组（四角套准十字+裁切角线，四边裁切标记，独立图层 LY_TAG_MARKS，套准色）
+  - `TagRemoveCornerMarks`：删除角线图层内容
+- **静态自检通过**：Sub/EndSub 6/6、Function 1/1、If 块 11/11（另 8 个单行 If）、For/Next 9/9、括号配对 0、**PtrSafe/LongPtr = 0**（VBA6 兼容确认）
+- API 写法均取自上游源码实测模式（GetBoundingBox/SetPosition/CreateLineSegment/Outline.SetProperties 等，X4 兼容）
+- 待办：X4 实测 4 宏 → 并入安装器 → M2 一并验收
