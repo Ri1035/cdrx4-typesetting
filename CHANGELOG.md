@@ -4,6 +4,15 @@
 
 ## [Unreleased]
 
+### 2026-09-29 — M2 验收启动：编译错误根因定位 + ZeroBase 全限定名绕过突破（会话暂停存档）
+
+- **稿件就绪**：用户提供 `蓝衣服（转曲.cdr`（原稿，未动）与 `蓝衣服-拼版验证.cdr`（副本，用户已群组；2 款×正反 4 面：T恤 50×50、卡片 50×85；A4 页 210×297mm）；cu 会话拉起 X4 打开副本
+- **编译错误根因（最终定位）**：X4 立即窗口裸运行 `TagMixPacking` 报"编译错误：语法错误"→ 文件级取证确认 **用户既有第三方插件 `CDRX4Toolkit.gms`（196,626 字节 / 09-29 16:15:09）被历史误导入并保存了损坏的 LanyaTagPack 模块**（非法类型 `SelectionRange`（应为 `ShapeRange`）、`ActivePage.Layers.CreateLayer`（应为 `ActivePage.CreateLayer`））；证据导出 `LanyaTagPack_fromCDRX4Toolkit.bas`（11,554 字节）；对照 `ZeroBase.gms`（396,306 / SHA256 CD93CBDB...）为**唯一干净持久化源**
+- **修复路径受阻记录**：VBE GUI 移除损坏模块（GMS 二进制复合文档不可脚本注入）因工程树坐标逐帧漂移、中文输入法拦截助记键（Ctrl+Space 切换可解）、活动工程漂移至锁定工程（ColorReplacer 弹"工程锁定"）等反复受阻；期间成功导入干净源码 `src/LanyaTagPack.bas` 为工程内 `LanyaTagPack1`（未覆盖，VBE 自动重命名）
+- **关键突破（可复用）**：立即窗口运行**全限定名 `ZeroBase.TagMixPacking`** → **编译通过**（零编译错误；仅因稿件未选中对象报"运行时错误 424：要求对象"）→ **M2 四宏流程不再被损坏模块阻塞**，可全程用 `ZeroBase.` 前缀运行
+- **会话暂停状态**：VBE 处中断态、424 弹窗未关；CDRX4Toolkit.gms 未保存（LanyaTagPack1 仅内存，重启即丢，不影响 ZeroBase 持久源）；恢复路径详见 HANDOFF §3
+- 待办：关 424 → 回 X4 选中群组吊牌 → `ZeroBase.TagMixPacking`（700×1000/间距6）→ `ZeroBase.TagAddBleed`（模式1/2+3mm）→ `ZeroBase.TagCornerMarks`（外延5/线长8/线宽0.1）→ 导出 PDF；后续清理 CDRX4Toolkit.gms 损坏模块；GitHub token 明文暴露建议撤销重生成
+
 ### 2026-09-28 — M1 项目初始化
 
 - 建立项目目录骨架（docs/upstream/installer/scripts）

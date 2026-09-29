@@ -1,7 +1,7 @@
 # PLAN.md — 吊牌排版插件一键打包项目（cdrx4-typesetting）
 
 > 本文件是项目的**唯一事实源（source of truth）**。上下文压缩或会话切换后，接手者先读本文件恢复全部计划与状态。
-> 最后更新：2026-09-28（**M3 完成**：增强宏 X4 实测通过并**持久化保存进 ZeroBase.gms**，已归档；待 M2 验收）
+> 最后更新：2026-09-29（**M2 验收启动**：稿件就绪、编译错误根因定位、ZeroBase 全限定名绕过法突破，四宏流程待跑；详见 §4 与 §7）
 
 ---
 
@@ -32,7 +32,7 @@
 | 里程碑 | 内容 | 状态 |
 |---|---|---|
 | M1 | 环境安装 + 双插件跑通（安装器 + X4 实测） | **✅ 完成（2026-09-28）** |
-| M2 | 真实稿件完整流程验证（≥3 SKU 真实订单 PDF 交印刷端确认） | **推迟**（用户决策：M3 完成后与增强版一并验收，避免重复验证被 M3 覆盖的流程） |
+| M2 | 真实稿件完整流程验证（≥3 SKU 真实订单 PDF 交印刷端确认） | **进行中（2026-09-29 启动）**：稿件 `蓝衣服-拼版验证.cdr`（2 款×正反 4 面）就绪；编译错误根因已定位（见 §7）；四宏流程待跑 |
 | M3 | 二次开发增强（按需：精确行列拼版、自动出血、角线组） | **✅ 完成（2026-09-28）**：`src/LanyaTagPack.bas`（4 宏 TagMixPacking/TagAddBleed/TagCornerMarks/TagRemoveCornerMarks，VBA6 兼容，静态自检通过）→ 用户 X4 实测四宏全部正常 → **已持久化保存进 ZeroBase.gms（396,306 字节，含 LanyaTagPack 模块，重启不丢）**，归档 `installer/assets/ZeroBase.gms`（哈希与用户宏目录一致 CD93CBDB...） |
 | M4 | 方案固化（封装团队可复用 skill） | 未开始 |
 
@@ -82,8 +82,12 @@
 ## 7. 下一步动作（接手者按序执行）
 
 1. **（已完成）M3 X4 实测 + 持久化**：四宏实测正常；`LanyaTagPack` 模块已保存进 ZeroBase.gms（VBE 导入→Ctrl+S，文件 396,306 字节，宏重启不丢）✅
-2. **（当前）并入安装器素材清单**：install.ps1 中 ZeroBase.gms 素材标注更新为"含 LanyaTagPack 增强宏（M3）"；素材校验按新哈希（CD93CBDB...）；重新 dry-run + 真机 dry-run 验证
-3. **M2 验收（推迟至此）**：取 ≥3 SKU 真实吊牌订单稿件，验证**增强后**的完整排版流程 → 输出 PDF 交印刷端确认
+2. **（当前）M2 验收（2026-09-29 现场，恢复路径见 HANDOFF §3 与 §7）**：
+   - 稿件：`C:\Users\Administrator\Desktop\蓝衣服-拼版验证.cdr`（X4 已打开；2 款×正反 4 面：T恤 50×50、卡片 50×85；用户已群组；原稿 `蓝衣服（转曲.cdr` 未动）
+   - **编译错误根因（已定位）**：用户既有第三方插件 `CDRX4Toolkit.gms`（196,626 字节，09-29 16:15 被误保存）内含**损坏 LanyaTagPack 模块**（非法类型 `SelectionRange`、`ActivePage.Layers.CreateLayer`）→ X4 立即窗口裸运行 `TagMixPacking` 报"编译错误：语法错误"。**绕行法（已验证可用）**：立即窗口运行**全限定名 `ZeroBase.TagMixPacking`** → 编译通过（ZeroBase.gms 396,306 字节为唯一干净持久化源），仅因稿件未选中对象报"运行时错误 424"——选中群组对象后即可跑
+   - **四宏流程**：混拼（大版宽700/高1000/间距6）→ 出血（模式1/2 + 3mm）→ 角线（外延5/线长8/线宽0.1）→ X4 导出 PDF 交印刷端确认
+   - **待清理（可延后）**：移除 CDRX4Toolkit.gms 内损坏 LanyaTagPack（及已导入的干净副本 LanyaTagPack1）恢复第三方插件原状；桌面散落 `LanyaTagPack_fromCDRX4Toolkit.bas` 等证据文件可归档/删除
+3. **并入安装器素材清单**：install.ps1 中 ZeroBase.gms 素材标注更新为"含 LanyaTagPack 增强宏（M3）"；素材校验按新哈希（CD93CBDB...）；重新 dry-run + 真机 dry-run 验证
 4. 生成一键入口（install.bat 双击脚本，可选）
 5. M4：方案固化封装团队可复用 skill；同步 CHANGELOG/HANDOFF 后提交
 
