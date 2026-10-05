@@ -1,39 +1,34 @@
-# cdrx4-typesetting
+# cdrx4-typesetting · 吊牌排版插件一键打包
 
-吊牌行业 CorelDRAW X4 排版插件一键打包项目。
+> 面向吊牌行业的 CorelDRAW X4 排版插件打包项目：把双开源插件与自研增强宏打成一键安装包，覆盖「稿件 → 排版 → 印刷」的常用排版动作。
 
-**核心方案**：蘭雅 CorelVBA（corelvba）+ vbabox 双开源插件，打包为 CorelDRAW X4 一键安装包，覆盖"设计师稿件 → 排版 → 印刷"全部排版动作（合并/排序/对齐/拼版/角线/居中/微调）。
+## 项目简介
 
-> 详细需求与验收见 [`../吊牌排版开源方案.md`](../吊牌排版开源方案.md)，开发准则见 [`../开发项目准则.md`](../开发项目准则.md)，**项目计划与当前状态见 [`PLAN.md`](PLAN.md)（唯一事实源）。**
+本项目基于蘭雅 CorelVBA（corelvba）与 vbabox 两个开源插件，打包为 CorelDRAW X4 一键安装包，覆盖合并 / 排序 / 对齐 / 拼版 / 角线 / 居中 / 微调等排版动作，并附带自研的吊牌增强宏。安装器自动复制 GMS / xslt 并引导导入宏，开箱即用。
 
-## 当前状态
+## 主要功能
 
-- **里程碑**：M1（双插件跑通）✅、M3（增强宏开发+实测+持久化）✅、M2（真实稿件验收）推迟至 M3 后一并验收
-- 2026-09-28：双插件 X4 实测正常（corelvba 尺寸标注 / vbabox LinesForm）；M3 吊牌增强宏四宏实测正常并**已保存进 ZeroBase.gms**（重启不丢）
-- 增强宏（`src/LanyaTagPack.bas`，M3 自研）：`TagMixPacking` 不同规格混拼 / `TagAddBleed` 自动出血 3mm（背景外扩+描边加一圈双模式）/ `TagCornerMarks` 四角四边套准十字+裁切角线 / `TagRemoveCornerMarks` 删除角线
+- 整合 corelvba + vbabox 双开源插件，统一一键安装
+- 混拼：不同规格吊牌混合排版（TagMixPacking）
+- 自动出血：背景外扩 + 描边加圈双模式，自动加 3mm 出血（TagAddBleed）
+- 套准角线：四角四边套准十字 + 裁切角线（TagCornerMarks）
+- 删除角线：一键清除套准角线（TagRemoveCornerMarks）
 
-## 目录结构
+## 快速开始
 
-```
-cdrx4-typesetting/
-├── PLAN.md            # 项目计划与状态（唯一事实源，接手先读）
-├── README.md          # 本文件
-├── CHANGELOG.md       # 变更日志
-├── HANDOFF.md         # 交接文档（给其他 agent 接手）
-├── docs/              # 方案、上游分析等
-├── upstream/          # 上游 clone：corelvba / vbabox
-├── installer/         # 一键安装器脚本
-└── scripts/           # 辅助脚本（验证、打包等）
-```
+运行 `installer/` 目录下的安装脚本，按提示完成 GMS / xslt 复制与宏导入（最后一步手动导入约 10 秒，为 CorelDRAW VBA 机制限制）。项目计划与状态见仓库内 [PLAN.md](PLAN.md)，变更记录见 [CHANGELOG.md](CHANGELOG.md)。
 
-## 技术要点
+## 技术栈
 
-- 目标软件：CorelDRAW Graphics Suite X4（32 位；插件兼容至最新版）
-- 打包形态：Windows 安装器自动复制 GMS/xslt + 一键导入宏（人工最后一步约 10 秒，CDR VBA 机制限制）
-- 上游：
-  - corelvba → https://github.com/hongwenjun/corelvba
-  - vbabox → https://github.com/hongwenjun/vbabox
+- CorelDRAW Graphics Suite X4（32 位；插件兼容至更新版本）
+- VBA 宏（GMS / xslt）· Windows 安装器脚本
+- 上游开源插件：corelvba、vbabox
+- 许可证：MIT
 
-## 许可证
+## 修改记录
 
-本项目文档 MIT（继承父目录 LICENSE © 2026 Ri1035）。**上游插件许可证待 clone 后核对**（corelvba 标注不一，见 PLAN.md 风险清单）。
+> 说明：修改记录仅记录文档维护变更，不计入版本更新。
+
+| 日期 | 修改内容 |
+| --- | --- |
+| 2026-10-05 | README 精简为项目介绍，补充 topics 标签 |
